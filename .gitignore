@@ -1,0 +1,16 @@
+# Cube-generated stuff
+build/
+Src/*
+Inc/*
+Drivers/*
+Makefile
+startup_*.s
+*.ld
+
+# clock_test binary
+clock_test/clock_test
+
+#Actual project files
+!Src/msm_rtc.c
+!Src/main.c
+!Inc/msm_rtc.h
