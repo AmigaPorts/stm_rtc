@@ -7,11 +7,22 @@
 #include "gpio.h"
 
 // CubeMX doesn't generate defines with bit number of user-defined pin names
+
+#if defined(STM32F031x6)
+#define D0_Pos 4
+#define A0_Pos 8
+#define NCS0_Pos 15
+#define NRD_Pos 12
+#define NWR_Pos 13
+#elif defined(STM32F030x6)
 #define D0_Pos 8
 #define A0_Pos 8
 #define NCS0_Pos 6
 #define NRD_Pos 1
 #define NWR_Pos 0
+#else
+#error Unknown STM!
+#endif
 
 #define BV(x) (1 << (x))
 #define READ_MASK (BV(NRD_Pos) | BV(NCS0_Pos))
@@ -45,7 +56,10 @@ typedef enum _tMsmReg {
 
 void msmRtcInit(void) {
 	// Speed up data lines
-	D0_GPIO_Port->OSPEEDR |= HISPEED(8) | HISPEED(9) | HISPEED(10) | HISPEED(11);
+	D0_GPIO_Port->OSPEEDR |= (
+		HISPEED(D0_Pos + 0) | HISPEED(D0_Pos + 1) |
+		HISPEED(D0_Pos + 2) | HISPEED(D0_Pos + 3)
+	);
 
 	// Print hello message
 	printf(
@@ -75,23 +89,28 @@ static uint32_t s_pMsmFields[MSM_ADDR_COUNT] = {
 	12 << D0_Pos, 13 << D0_Pos, 14 << D0_Pos, 15 << D0_Pos
 };
 
-static inline void rtcReadWriteProcess(void) {
+static inline __attribute__((always_inline)) void rtcReadWriteProcess(void) {
 	uint32_t ulStatus = NRD_GPIO_Port->IDR;
 	// NWR/NRD may not occur right on CS edge, thus check for both pins at once
-	// if((uwStatus & WRITE_MASK) == 0) {
-	// 	// Write - TIME CRITICAL!
-	// 	uint8_t ubAddr = A0_GPIO_Port->IDR >> 8; // read addr asap
-	// 	uint8_t ubData = D0_GPIO_Port->IDR >> 8; // read data asap
-	// 	printf("WRITE: %x %x\r\n", ubAddr, ubData);
-	// }
-	// else
+	if((ulStatus & WRITE_MASK) == 0) {
+		// Write - TIME CRITICAL!
+		uint8_t ubAddr = A0_GPIO_Port->IDR >> A0_Pos; // read addr asap
+		uint8_t ubData = D0_GPIO_Port->IDR >> D0_Pos; // read data asap
+		// printf("WRITE: %x %x\r\n", ubAddr, ubData);
+	}
+	else
 	if((ulStatus & READ_MASK) == 0) {
 		// Read desired register number from address lines
-		uint32_t ulAddr = (A0_GPIO_Port->IDR >> A0_Pos) & 0xF; // read addr asap
+		// ARM uses byte addressing so shift a bit less
+		uint32_t ulAddr = (A0_GPIO_Port->IDR >> (A0_Pos - 2)) & (0xF << 2); // read addr asap
+		// printf("READ! %lu\r\n", ulAddr);
 		// Output cached value
-		D0_GPIO_Port->ODR = s_pMsmFields[ulAddr];
+		D0_GPIO_Port->ODR = *(uint32_t*)&((uint8_t*)s_pMsmFields)[ulAddr];
 		// Switch data to output
-		D0_GPIO_Port->MODER = MODE_OUT(8) | MODE_OUT(9) | MODE_OUT(10) | MODE_OUT(11);
+		D0_GPIO_Port->MODER = (
+			MODE_OUT(D0_Pos + 0) | MODE_OUT(D0_Pos + 1) |
+			MODE_OUT(D0_Pos + 2) | MODE_OUT(D0_Pos + 3)
+		);
 		// Switch data to input to not trash data lines
 		D0_GPIO_Port->MODER = 0;
 	}
@@ -102,6 +121,7 @@ static const uint8_t pWeekStm2Msm[] = {0, 1, 2, 3, 4, 5, 6, 0};
 void msmRtcLoop(void) {
 	uint32_t ulReg, ulVal;
 	while(1) {
+		// TODO Shifts are different on different chips - overflows & underflows
 		// Get hours/minutes/seconds
 		rtcReadWriteProcess();
 		ulReg = RTC->TR;
