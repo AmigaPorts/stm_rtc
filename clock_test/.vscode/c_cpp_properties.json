@@ -1,0 +1,30 @@
+{
+	"configurations": [
+		{
+			"name": "Win32",
+			"includePath": [
+				"${workspaceFolder}/src",
+				"${workspaceFolder}/deps/ACE/include",
+				"C:/prg/kompilatory/bebbo/m68k-amigaos/ndk-include"
+			],
+			"defines": [
+				"_DEBUG",
+				"UNICODE",
+				"_UNICODE",
+				"AMIGA"
+			],
+			"compilerPath": "C:\\prg\\kompilatory\\mingw-w64\\i686-7.3.0-posix-dwarf-rt_v5-rev0\\bin\\gcc.exe",
+			"cStandard": "c11",
+			"cppStandard": "c++17",
+			"intelliSenseMode": "clang-x64",
+			"browse": {
+				"path": [
+					"${workspaceFolder}"
+				],
+				"databaseFilename": "${workspaceFolder}/.vscode/symbols.db",
+				"limitSymbolsToIncludedHeaders": true
+			}
+		}
+	],
+	"version": 4
+}

@@ -8,6 +8,7 @@
 			"type": "shell",
 			"command": "mingw32-make",
 			"args": [
+				// "CC=C:/prg/kompilatory/_new_gcc-arm/bin/arm-none-eabi-gcc",
 				"OPT=-Ofast -std=c11 -Wall -Wpedantic -frename-registers",
 				"DEBUG=0",
 			],
