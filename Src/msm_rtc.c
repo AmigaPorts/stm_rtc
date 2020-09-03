@@ -124,6 +124,8 @@ static inline __attribute__((always_inline)) void rtcReadWriteProcess(void) {
 
 static const uint8_t pWeekStm2Msm[] = {0, 1, 2, 3, 4, 5, 6, 0};
 
+#define shiftFromTo(Reg, From, To) (((From) > (To)) ? ((Reg) >> ((From) - (To))) : ((Reg) << ((To) - (From))))
+
 void msmRtcLoop(void) {
 	uint32_t ulReg, ulVal;
 	while(1) {
@@ -134,21 +136,21 @@ void msmRtcLoop(void) {
 
 		// Update seconds
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_SECONDS_1] = ulReg << (D0_Pos - RTC_TR_SU_Pos);
+		s_pMsmFields[MSM_SECONDS_1] = shiftFromTo(ulReg, RTC_TR_SU_Pos, D0_Pos);
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_SECONDS_10] = ulReg >> (RTC_TR_ST_Pos - D0_Pos);
+		s_pMsmFields[MSM_SECONDS_10] = shiftFromTo(ulReg, RTC_TR_ST_Pos, D0_Pos);
 
 		// Update minutes
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_MINUTES_1] = ulReg >> (RTC_TR_MNU_Pos - D0_Pos);
+		s_pMsmFields[MSM_MINUTES_1] = shiftFromTo(ulReg, RTC_TR_MNU_Pos, D0_Pos);
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_MINUTES_10] = ulReg >> (RTC_TR_MNT_Pos - D0_Pos);
+		s_pMsmFields[MSM_MINUTES_10] = shiftFromTo(ulReg, RTC_TR_MNT_Pos, D0_Pos);
 
 		// Update hour
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_HOURS_1] = ulReg >> (RTC_TR_HU_Pos - D0_Pos);
+		s_pMsmFields[MSM_HOURS_1] = shiftFromTo(ulReg, RTC_TR_HU_Pos, D0_Pos);
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_HOURS_10] = ulReg >> (RTC_TR_HT_Pos - D0_Pos);
+		s_pMsmFields[MSM_HOURS_10] = shiftFromTo(ulReg, RTC_TR_HT_Pos, D0_Pos);
 
 		// Read day/month/year/dayOfWeek
 		rtcReadWriteProcess();
@@ -156,16 +158,16 @@ void msmRtcLoop(void) {
 
 		// Update day
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_DAY_1] = ulReg << (D0_Pos - RTC_DR_DU_Pos);
+		s_pMsmFields[MSM_DAY_1] = shiftFromTo(ulReg, RTC_DR_DU_Pos, D0_Pos);
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_DAY_10] = ulReg >> (RTC_DR_DT_Pos - D0_Pos);
+		s_pMsmFields[MSM_DAY_10] = shiftFromTo(ulReg, RTC_DR_DT_Pos, D0_Pos);
 
 		// Update month
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_MONTH_1] = ulReg >> (RTC_DR_MU_Pos - D0_Pos);
+		s_pMsmFields[MSM_MONTH_1] = shiftFromTo(ulReg, RTC_DR_MU_Pos, D0_Pos);
 		rtcReadWriteProcess();
 		ulVal = ulReg & RTC_DR_MT_Msk;
-		s_pMsmFields[MSM_MONTH_10] = ulVal >> (RTC_DR_MT_Pos - D0_Pos);
+		s_pMsmFields[MSM_MONTH_10] = shiftFromTo(ulVal, RTC_DR_MT_Pos, D0_Pos);
 
 		// Update week day
 		// MSM: 0 is sunday, 1 is monday
@@ -181,9 +183,9 @@ void msmRtcLoop(void) {
 
 		// Update year
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_YEAR_1] = ulReg >> (RTC_DR_YU_Pos - D0_Pos);
+		s_pMsmFields[MSM_YEAR_1] = shiftFromTo(ulReg, RTC_DR_YU_Pos, D0_Pos);
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_YEAR_10] = ulReg >> (RTC_DR_YT_Pos - D0_Pos);
+		s_pMsmFields[MSM_YEAR_10] = shiftFromTo(ulReg, RTC_DR_YT_Pos, D0_Pos);
 	}
 }
 

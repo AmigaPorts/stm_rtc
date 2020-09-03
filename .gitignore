@@ -21,3 +21,4 @@ SYMBOLS.DB
 pcb/stm_rtc/routing/
 pcb/panel/
 pcb/*.png
+deasm.s

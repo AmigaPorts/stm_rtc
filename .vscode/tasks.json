@@ -8,9 +8,8 @@
 			"type": "shell",
 			"command": "mingw32-make",
 			"args": [
-				// "CC=C:/prg/kompilatory/_new_gcc-arm/bin/arm-none-eabi-gcc",
 				"OPT=-Ofast -std=c11 -Wall -Wpedantic -frename-registers",
-				"DEBUG=0",
+				"DEBUG=0"
 			],
 			"group": {
 				"kind": "build",
@@ -19,6 +18,19 @@
 			"problemMatcher": [
 				"$gcc"
 			]
+		},
+		{
+			"label": "disassemble",
+			"type": "shell",
+			"command": "arm-none-eabi-objdump",
+			"args": [
+				"-S",
+				"-d",
+				"build/stm_rtc_stm32g070cbt6.elf",
+				">",
+				"deasm.s"
+			],
+			"problemMatcher": []
 		}
 	]
 }
