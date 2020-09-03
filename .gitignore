@@ -17,3 +17,7 @@ clock_test/clock_test
 
 #VSCode temp files
 SYMBOLS.DB
+
+pcb/stm_rtc/routing/
+pcb/panel/
+pcb/*.png
