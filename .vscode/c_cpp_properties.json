@@ -10,7 +10,7 @@
                 "UNICODE",
 								"_UNICODE",
 								"USE_HAL_DRIVER",
-								"STM32F031x6"
+								"STM32G070xx"
             ],
             "compilerPath": "C:\\prg\\kompilatory\\gcc-arm\\bin\\arm-none-eabi-gcc.exe",
             "cStandard": "c11",

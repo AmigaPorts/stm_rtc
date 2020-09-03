@@ -3,8 +3,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "msm_rtc.h"
-#include "usart.h"
-#include "gpio.h"
+#include "main.h"
+#include <stdio.h>
 
 // CubeMX doesn't generate defines with bit number of user-defined pin names
 
@@ -20,6 +20,12 @@
 #define NCS0_Pos 6
 #define NRD_Pos 1
 #define NWR_Pos 0
+#elif defined(STM32G070xx)
+#define D0_Pos 0
+#define A0_Pos 2
+#define NCS0_Pos 15
+#define NRD_Pos 13
+#define NWR_Pos 12
 #else
 #error Unknown STM!
 #endif
@@ -130,11 +136,11 @@ void msmRtcLoop(void) {
 		rtcReadWriteProcess();
 		s_pMsmFields[MSM_SECONDS_1] = ulReg << (D0_Pos - RTC_TR_SU_Pos);
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_SECONDS_10] = ulReg << (D0_Pos - RTC_TR_ST_Pos);
+		s_pMsmFields[MSM_SECONDS_10] = ulReg >> (RTC_TR_ST_Pos - D0_Pos);
 
 		// Update minutes
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_MINUTES_1] = ulReg << (D0_Pos - RTC_TR_MNU_Pos);
+		s_pMsmFields[MSM_MINUTES_1] = ulReg >> (RTC_TR_MNU_Pos - D0_Pos);
 		rtcReadWriteProcess();
 		s_pMsmFields[MSM_MINUTES_10] = ulReg >> (RTC_TR_MNT_Pos - D0_Pos);
 
@@ -152,11 +158,11 @@ void msmRtcLoop(void) {
 		rtcReadWriteProcess();
 		s_pMsmFields[MSM_DAY_1] = ulReg << (D0_Pos - RTC_DR_DU_Pos);
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_DAY_10] = ulReg << (D0_Pos - RTC_DR_DT_Pos);
+		s_pMsmFields[MSM_DAY_10] = ulReg >> (RTC_DR_DT_Pos - D0_Pos);
 
 		// Update month
 		rtcReadWriteProcess();
-		s_pMsmFields[MSM_MONTH_1] = ulReg << (D0_Pos - RTC_DR_MU_Pos);
+		s_pMsmFields[MSM_MONTH_1] = ulReg >> (RTC_DR_MU_Pos - D0_Pos);
 		rtcReadWriteProcess();
 		ulVal = ulReg & RTC_DR_MT_Msk;
 		s_pMsmFields[MSM_MONTH_10] = ulVal >> (RTC_DR_MT_Pos - D0_Pos);

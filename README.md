@@ -12,7 +12,10 @@ tell me so by creating an issue!
 To build firmware, you'll need STM32CubeMX installed to generate required HAL stuff.
 This way you can also easily port this project to other chips.
 
-- open stm_rtc.ioc in STM32CubeMX, then click `GENERATE CODE` button.
+- Delete `build` folder if present in main repo directory.
+- Delete `makefile` if present in main repo directory.
+  For some reason STM32CubeMX doesn't regenerate it each time.
+- Open stm_rtc_yourPartName.ioc in STM32CubeMX, then click `GENERATE CODE` button.
 - After that, simply use generated makefile by writing:
 
 ``` sh
