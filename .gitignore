@@ -14,3 +14,9 @@ clock_test/clock_test
 !Src/msm_rtc.c
 !Src/main.c
 !Inc/msm_rtc.h
+
+pcb/stm_rtc/routing/
+
+pcb/panel/
+
+*.png
